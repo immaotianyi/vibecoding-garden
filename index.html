@@ -3272,7 +3272,7 @@ const POSTS = [
 # 本补丁是每个 dsh profile 共享的核心，以一次 insert 应用在空 profile 根之上。
 # 后续的 bundle patch 与用户 profile 的 cordis.patch.yml 按 id 寻址这些行，每行以最后一次写入为准。
 #
-# A patch replaces the targeted row's whole `config` rather than merging into
+# A patch replaces the targeted row's whole \`config\` rather than merging into
 # it.
 # patch 替换目标行的整个 config，而不是合并进去。
 #
@@ -3327,9 +3327,9 @@ const POSTS = [
  * Public shape of a Cordis context.
  * Cordis 上下文的公开形态。
  *
- * The concrete `Context` class is proxied at runtime, so this interface is
+ * The concrete \`Context\` class is proxied at runtime, so this interface is
  * augmented by core services and plugins to describe the properties that may
- * be read from `ctx`.
+ * be read from \`ctx\`.
  * 具体 Context 类在运行时被代理，因此该接口由核心服务与插件扩展，以描述可从 ctx 读取的属性。
  */
 export interface Context {
@@ -3339,13 +3339,13 @@ export interface Context {
   [symbols.intercept]: Dict
   /** The root context of the application (every child context shares it). 应用的根上下文（每个子上下文共享它）。 */
   root: this
-  /** The event bus. Its methods are also mixed onto `ctx` (`ctx.on`, `ctx.emit`, ...). 事件总线；其方法也混入 `ctx`（`ctx.on`、`ctx.emit` 等）。 */
+  /** The event bus. Its methods are also mixed onto \`ctx\` (\`ctx.on\`, \`ctx.emit\`, ...). 事件总线；其方法也混入 \`ctx\`（\`ctx.on\`、\`ctx.emit\` 等）。 */
   events: EventsService
-  /** The logging service. Call `ctx.logger(name)` for a named logger. 日志服务；用 `ctx.logger(name)` 获取命名 logger。 */
+  /** The logging service. Call \`ctx.logger(name)\` for a named logger. 日志服务；用 \`ctx.logger(name)\` 获取命名 logger。 */
   logger: LoggerService
-  /** The reflection layer backing the context proxy (`ctx.get`, `ctx.provide`, ...). 支撑上下文代理的反射层（`ctx.get`、`ctx.provide` 等）。 */
+  /** The reflection layer backing the context proxy (\`ctx.get\`, \`ctx.provide\`, ...). 支撑上下文代理的反射层（\`ctx.get\`、\`ctx.provide\` 等）。 */
   reflect: ReflectService
-  /** The plugin registry. Its methods are mixed onto `ctx` (`ctx.plugin`, `ctx.inject`). 插件注册表；其方法也混入 `ctx`（`ctx.plugin`、`ctx.inject`）。 */
+  /** The plugin registry. Its methods are mixed onto \`ctx\` (\`ctx.plugin\`, \`ctx.inject\`). 插件注册表；其方法也混入 \`ctx\`（\`ctx.plugin\`、\`ctx.inject\`）。 */
   registry: RegistryService
 }</code></pre>
 <p><em style="opacity:0.7;">片段 1.2 · vendor/cordis/src/context.ts:16-33</em></p>
@@ -3357,7 +3357,7 @@ export interface Context {
  * Cordis 插件的根与子依赖容器。
  *
  * A context is a proxy: normal property reads go through the service resolver,
- * while `extend()`, `isolate()`, and `intercept()` create scoped child
+ * while \`extend()\`, \`isolate()\`, and \`intercept()\` create scoped child
  * contexts without mutating their parent.
  * 上下文是代理：普通属性读取走服务解析，而 extend()/isolate()/intercept() 创建作用域化子上下文而不改动父上下文。
  */
@@ -3377,19 +3377,19 @@ constructor() {
 <p>服务本身是 Service 基类的子类，<strong>构造即注册</strong>，随所属 fiber 卸载自动移除：</p>
 <pre><code>// vendor/cordis/src/service.ts:11, 32-43（节选）
 /**
- * Base class for services that expose a named API on `ctx`.
+ * Base class for services that expose a named API on \`ctx\`.
  * 在 ctx 上暴露具名 API 的服务基类。
  *
- * Subclasses call `super(ctx, name)` from their constructor. The service is
+ * Subclasses call \`super(ctx, name)\` from their constructor. The service is
  * registered immediately and is automatically removed with the owning fiber.
  * 子类在构造器中调用 super(ctx, name)。服务立即注册，并随所属 fiber 自动移除。
  */
 export abstract class Service&lt;out T = never&gt; {
   /**
-   * Register this instance as `name` in the current context.
+   * Register this instance as \`name\` in the current context.
    * 在当前上下文中将此实例注册为 name。
    *
-   * Calls `ctx.reflect.provide(name, this, this[Service.check])`, so the
+   * Calls \`ctx.reflect.provide(name, this, this[Service.check])\`, so the
    * service is unregistered automatically when the owning fiber unloads.
    * 调用 ctx.reflect.provide(name, this, this[Service.check])，因此服务在所属 fiber 卸载时自动注销。
    */
@@ -3412,9 +3412,9 @@ export abstract class Service&lt;out T = never&gt; {
  * Resolve listeners for one dispatch and apply context filtering.
  * 解析一次分发的监听器并应用上下文过滤。
  *
- * @param type — the dispatch mode, reported on `internal/dispatch`. 分发模式，记录于 `internal/dispatch`。
+ * @param type — the dispatch mode, reported on \`internal/dispatch\`. 分发模式，记录于 \`internal/dispatch\`。
  * @param args — the raw dispatch arguments; consumed up to the event name. 原始分发参数；消费到事件名为止。
- * @returns the matching listener callbacks, bound to the dispatch `this`. 匹配的监听器回调，绑定到分发的 `this`。
+ * @returns the matching listener callbacks, bound to the dispatch \`this\`. 匹配的监听器回调，绑定到分发的 \`this\`。
  */
 dispatch(type: string, args: any[]) {
   const thisArg = typeof args[0] === 'object' || typeof args[0] === 'function' ? args.shift() : null
@@ -3431,11 +3431,11 @@ dispatch(type: string, args: any[]) {
 <p>waterfall 是 dsh 用得最多的模式，值得看它的实现——<strong>最后一个参数是 innermost next</strong>，监听器从外到内组合，不调用 next() 就短路（veto）：</p>
 <pre><code>// vendor/cordis/src/events.ts:234-243
 /**
- * Compose listeners around the final `next` callback.
+ * Compose listeners around the final \`next\` callback.
  * 将监听器组合在最终的 next 回调周围。
  *
- * The last dispatch argument is treated as the innermost `next`. Listeners
- * run outermost-first; a listener that does not call `next()` vetoes the
+ * The last dispatch argument is treated as the innermost \`next\`. Listeners
+ * run outermost-first; a listener that does not call \`next()\` vetoes the
  * rest of the chain, including the built-in behavior.
  * 最后一个分发参数被视为最内层的 next。监听器从最外层开始运行；
  * 不调用 next() 的监听器会否决链的其余部分——包括内置行为。
@@ -3476,15 +3476,15 @@ async serial(...args: any[]) {
  * Register a cleanup-aware effect on this fiber.
  * 在此 fiber 上注册一个感知清理的效果。
  *
- * `execute` runs immediately; the disposers it produces are collected and
+ * \`execute\` runs immediately; the disposers it produces are collected and
  * run (in reverse order) either when the returned disposer is called or
  * when the fiber unloads, whichever comes first. Calling the disposer twice
  * is a no-op.
  * execute 立即运行；其产生的 disposer 被收集，并在返回的 disposer 被调用或 fiber 卸载时
  * （以先到者为准）按逆序运行。重复调用 disposer 是 no-op。
  *
- * Throws `CordisError('INACTIVE_EFFECT')` if the fiber is already disposed,
- * and `TypeError` if `execute` returns an invalid shape.
+ * Throws \`CordisError('INACTIVE_EFFECT')\` if the fiber is already disposed,
+ * and \`TypeError\` if \`execute\` returns an invalid shape.
  * fiber 已销毁时抛出 CordisError('INACTIVE_EFFECT')；execute 返回非法形态时抛出 TypeError。
  */
 effect(execute: () =&gt; Effect, label = 'anonymous'): any {
@@ -3515,13 +3515,13 @@ effect(execute: () =&gt; Effect, label = 'anonymous'): any {
  * 注册一个由当前 fiber 拥有的事件监听器。
  *
  * The listener is removed automatically when the fiber unloads. Throws
- * `CordisError('INACTIVE_EFFECT')` if the fiber is already disposed.
+ * \`CordisError('INACTIVE_EFFECT')\` if the fiber is already disposed.
  * 监听器在 fiber 卸载时自动移除。fiber 已销毁时抛出 CordisError('INACTIVE_EFFECT')。
  *
  * @param name — the event name to listen for. 要监听的事件名。
  * @param listener — called with the dispatch arguments. 以分发参数调用。
- * @param options — listener options; a boolean is shorthand for `prepend`. 监听器选项；布尔值是 prepend 的简写。
- * @returns a disposer removing the listener; `true` if it was still registered. 移除监听器的 disposer；若仍在注册则返回 true。
+ * @param options — listener options; a boolean is shorthand for \`prepend\`. 监听器选项；布尔值是 prepend 的简写。
+ * @returns a disposer removing the listener; \`true\` if it was still registered. 移除监听器的 disposer；若仍在注册则返回 true。
  */
 on(name: string | symbol, listener: (...args: any) =&gt; any, options?: boolean | EventOptions) {
   this.ctx.fiber.assertActive()
@@ -3529,7 +3529,7 @@ on(name: string | symbol, listener: (...args: any) =&gt; any, options?: boolean 
   const result = this.bail(this.ctx, 'internal/listener', name, listener, options)
   if (result) return result
   const hooks = this._hooks[name] ||= []
-  const label = `ctx.on(${JSON.stringify(name)})`
+  const label = \`ctx.on(\${JSON.stringify(name)})\`
   return this.register(label, hooks, listener, options)
 }</code></pre>
 <p><em style="opacity:0.7;">片段 1.9 · vendor/cordis/src/events.ts:288-302（节选）</em></p>
@@ -3542,7 +3542,7 @@ on(name: string | symbol, listener: (...args: any) =&gt; any, options?: boolean 
  * 请求的依赖可用后启动回调。
  *
  * @param inject — required services, as an array or a name → config map. 所需服务，数组或 name → config 映射。
- * @param callback — plugin body called with `(ctx, config)`. 插件主体，以 (ctx, config) 调用。
+ * @param callback — plugin body called with \`(ctx, config)\`. 插件主体，以 (ctx, config) 调用。
  * @returns the fiber; awaiting it settles once loading finished. 返回 fiber；await 它在加载完成后落定。
  */
 inject(inject: Inject, callback: Plugin.Function&lt;void&gt;) {
@@ -3574,7 +3574,7 @@ export class AgentLoop extends Service implements AgentFactory {
 <p>Cordis 原版没有”作用域”概念。dsh 的 dsh-scope 包补上了它：给任意对象铸一个<strong>带身份的子上下文</strong>。</p>
 <pre><code>// packages/core/scope/src/index.ts:137-147
 /**
- * Mint a scope under `ctx`. The scoped context inherits the minting plugin's
+ * Mint a scope under \`ctx\`. The scoped context inherits the minting plugin's
  * dependency API and owns every registration made through it.
  * 在 ctx 下铸一个作用域。作用域化上下文继承铸造插件的依赖 API，并拥有通过它进行的每项注册。
  *
@@ -3609,7 +3609,7 @@ export function createScope(ctx: Context, key: ScopeKey, options?: CreateScopeOp
  * 位于分发 key 之下的标签保持排除——事件沿链向上流动，从不向下。
  *
  * @param base - subject or service whose existing Cordis filter is preserved. 保留其既有 Cordis 过滤器的主体或服务。
- * @param key - routed scope identity, or `undefined` for an unscoped subject. 路由作用域身份；无作用域主体为 undefined。
+ * @param key - routed scope identity, or \`undefined\` for an unscoped subject. 路由作用域身份；无作用域主体为 undefined。
  * @returns a carrier whose subject remains available only through event arguments. 载体；其主体仅通过事件参数可用。
  */
 export function scopeTarget&lt;T extends object&gt;(base: T, key: ScopeKey | undefined): Scoped&lt;T&gt; {
@@ -3656,8 +3656,8 @@ declare module '@deepseek-ai/cordis' {
  * Registry service for the prompt inputs assembled before each model step.
  * 在每个模型步骤前组装提示词输入的注册表服务。
  *
- * Sections are concatenated in ascending order. Convention: `-100` is the
- * harness identity, `0` the deployment persona, tool guidance uses 100–199;
+ * Sections are concatenated in ascending order. Convention: \`-100\` is the
+ * harness identity, \`0\` the deployment persona, tool guidance uses 100–199;
  * other negative orders also render before the persona.
  * 分段按升序拼接。约定：-100 是 harness 身份，0 是部署 persona，工具指引用 100–199；其他负数顺序也在 persona 之前渲染。
  */
@@ -3693,7 +3693,7 @@ export class SystemPrompt extends Service {
  * Register an ordered prompt section in the calling context's scope. A scoped
  * section shadows a global section with the same name; duplicates within one
  * layer and non-finite orders throw. Registration and disposal emit
- * `system-prompt/change`.
+ * \`system-prompt/change\`.
  * 在调用上下文的作用域中注册一个有序提示词分段。作用域分段遮蔽同名全局分段；
  * 同一层内的重复与非有限顺序会抛错。注册与销毁都会发出 system-prompt/change。
  *
@@ -3702,7 +3702,7 @@ export class SystemPrompt extends Service {
  */
 section(section: PromptSection): () =&gt; void {
   if (!Number.isFinite(section.order)) {
-    throw new TypeError(`prompt section "${section.name}" order must be a finite number`)
+    throw new TypeError(\`prompt section "\${section.name}" order must be a finite number\`)
   }
   return this.layers.effect(
     this.ctx,
@@ -3748,13 +3748,13 @@ async assemble(context: AssembleContext = {}): Promise&lt;PromptAssembly&gt; {
 <p>dsh 最反直觉的决策：会话没有”消息表”，只有一条<strong>追加式事件日志</strong>。事件词汇表是 SessionEventMap——一个声明合并的判别联合：</p>
 <pre><code>// packages/core/session/src/types.ts:236-260（节选）
 export interface SessionEventMap {
-  /** Opens turn `turn` before the loop claims queued input or runs pre-step. 在循环认领排队输入或运行 pre-step 之前打开轮次 `turn`。 */
+  /** Opens turn \`turn\` before the loop claims queued input or runs pre-step. 在循环认领排队输入或运行 pre-step 之前打开轮次 \`turn\`。 */
   'turn/start': { turn: number }
-  /** Closes turn `turn` with the TurnEndReason that ended it. 以结束该轮次的 TurnEndReason 关闭轮次 `turn`。 */
+  /** Closes turn \`turn\` with the TurnEndReason that ended it. 以结束该轮次的 TurnEndReason 关闭轮次 \`turn\`。 */
   'turn/end': { turn: number; reason: TurnEndReason }
-  /** Opens step `step` of turn `turn` — one model call plus the tool executions it requested. 打开轮次 `turn` 的步骤 `step`——一次模型调用及其请求的工具执行。 */
+  /** Opens step \`step\` of turn \`turn\` — one model call plus the tool executions it requested. 打开轮次 \`turn\` 的步骤 \`step\`——一次模型调用及其请求的工具执行。 */
   'step/start': { turn: number; step: number }
-  /** Closes step `step` of turn `turn`. 关闭轮次 `turn` 的步骤 `step`。 */
+  /** Closes step \`step\` of turn \`turn\`. 关闭轮次 \`turn\` 的步骤 \`step\`。 */
   'step/end': { turn: number; step: number }
   /** A user-role message on the model-visible surface. 模型可见表面上的一条 user 角色消息。 */
   'user/message': UserMessage
@@ -3774,17 +3774,17 @@ export interface SessionEventMap {
 <pre><code>// packages/core/session/src/index.ts:726-747（节选）
 /**
  * Derive the LLM message history by walking the ordered sequences of
- * message-producing events maintained by `surfaceOp` markers. The
+ * message-producing events maintained by \`surfaceOp\` markers. The
  * surface is the single source of derived history: every message-producing
- * append records its `surfaceOp`, so a raw event with no marker (a chunk, a
- * turn boundary) is correctly absent, and a compaction `replace` deletes the
+ * append records its \`surfaceOp\`, so a raw event with no marker (a chunk, a
+ * turn boundary) is correctly absent, and a compaction \`replace\` deletes the
  * shadowed nodes from the derivation.
  * 通过遍历由 surfaceOp 标记维护的消息产生事件的有序序列，派生 LLM 消息历史。surface 是派生历史的唯一来源：
  * 每个产生消息的追加都记录其 surfaceOp，因此没有标记的原始事件（chunk、轮次边界）正确地缺席，
  * 而压缩 replace 会从派生中删除被遮蔽的节点。
  *
  * CACHED: each surface node is projected exactly once, when first seen — a
- * call costs O(new nodes), and a surface rewrite (a `replace`) rebuilds.
+ * call costs O(new nodes), and a surface rewrite (a \`replace\`) rebuilds.
  * 已缓存：每个 surface 节点首次出现时只投影一次——一次调用开销为 O(新节点)，surface 重写（replace）时重建。
  *
  * @returns a fresh array of the shared, frozen derived history. 共享的、冻结的派生历史的新数组。
@@ -3871,7 +3871,7 @@ constructor(
 <p>工具同样不是”内置的”。看一个真实的工具 todo_write（todo 列表工具）的完整插件骨架：</p>
 <pre><code>// packages/todo/tool-todo/src/index.ts:128-190（节选）
 /**
- * Model-facing whole-list replacement. Each call appends a `todo/write` snapshot to the calling
+ * Model-facing whole-list replacement. Each call appends a \`todo/write\` snapshot to the calling
  * agent's session; replay is last-write-wins, and UIs render from session events. A non-agent
  * caller has no owning list and is rejected.
  * 面向模型的整表替换。每次调用向调用 agent 的会话追加一个 todo/write 快照；回放为最后写入获胜，
@@ -3882,8 +3882,8 @@ export const name = 'tool-todo'
 export const inject = ['tools']
  
 /**
- * Register the `todo_write` tool on `ctx.tools` and, when the session-projection seam is composed,
- * the `todos` unit.
+ * Register the \`todo_write\` tool on \`ctx.tools\` and, when the session-projection seam is composed,
+ * the \`todos\` unit.
  * 在 ctx.tools 上注册 todo_write 工具；当组合中包含会话投影接缝时，还注册 todos 单元。
  *
  * @param ctx - registrant context carrying the tool registry. 携带工具注册表的注册者上下文。
@@ -3944,7 +3944,7 @@ export const PROFILE_TEMPLATES: Record&lt;string, readonly string[]&gt; = {
 <pre><code>// packages/boot/app-boot/src/profile.ts:437-444
 /**
  * Compose patch layers into the effective entry list over an empty root —
- * the same single `applyEntryPatches` call the boot include makes, so flag
+ * the same single \`applyEntryPatches\` call the boot include makes, so flag
  * derivation and config dumps see exactly what mounts.
  * 将 patch 层在空根上组合为有效条目列表——与 boot include 所用的同一次 applyEntryPatches 调用一致，
  * 因此标志派生与配置转储看到的正是实际挂载的内容。
@@ -3966,14 +3966,14 @@ export function composeEntries(
 <p>启动时，app-boot 的 boot() 做四件事：建根 Context → <strong>把 Loader 作为插件安装</strong> → 挂载根 Include（读配置树）→ 等整棵树 settle 并做激活审计：</p>
 <pre><code>// packages/boot/app-boot/src/index.ts:757-785（节选）
 /**
- * Boot the Loader against `absoluteConfigPath` and return only after the whole
+ * Boot the Loader against \`absoluteConfigPath\` and return only after the whole
  * tree settles. Relative entry names resolve against the config directory;
  * bare package names resolve there by default or against an explicit
- * `bareModuleBaseUrl` for closed packaged runtimes.
+ * \`bareModuleBaseUrl\` for closed packaged runtimes.
  * 针对 absoluteConfigPath 启动 Loader，并仅在整棵树 settle 后返回。相对条目名相对于配置目录解析；
  * 裸包名默认在那里解析，封闭打包运行时则相对显式 bareModuleBaseUrl 解析。
  *
- * Loader settlement rejects startup failures, which `boot` wraps after disposing the
+ * Loader settlement rejects startup failures, which \`boot\` wraps after disposing the
  * partial context; a missing fiber or never-activating entry is rejected by
  * the final audit.
  * Loader 落定会拒绝启动失败，boot 在销毁部分上下文后包装之；缺失 fiber 或永不激活的条目会被最终审计拒绝。
@@ -4112,7 +4112,7 @@ export async function boot(binName: string, absoluteConfigPath: string, patches?
     // 1. 无损 JSON 校验：非 JSON 可序列化的事件在源头被拒绝
     const dataSnapshot = snapshotJsonValue(data)
     if (dataSnapshot === undefined) {
-      throw new Error(`session event "${type}" carries non-JSON-serializable data`)
+      throw new Error(\`session event "\${type}" carries non-JSON-serializable data\`)
     }
     // 2. 事件构造：seq = log.length —— 单调、连续、可重放的序号
     const event = deepFreeze({
@@ -4157,7 +4157,7 @@ export async function boot(binName: string, absoluteConfigPath: string, patches?
  * empty-content assistant/message (which exists only to host usage).
  * 将单个事件投影为它派生出的 LLM 消息；不产生消息时返回 null——非表面事件（chunk、边界、仅日志记录）
  * 或空内容的 assistant/message（仅用于承载 usage）都返回 null。
- * This is THE per-node projection rule: `Session.deriveMessages` folds it over
+ * This is THE per-node projection rule: \`Session.deriveMessages\` folds it over
  * the live surface, external reconstructors fold the same function over a log
  * prefix to rebuild the exact messages any request was built from.
  * 这是唯一的逐节点投影规则：Session.deriveMessages 在实时表面上折叠它，
@@ -4479,7 +4479,7 @@ export async function executeToolCalls(
    * Execute through pre-policy, guards, around-dispatch, post-policy,
    * definition-owned content finalization, and final notification. Tool and
    * listener failures resolve as materialized error results; an invisible tool
-   * reports `UNKNOWN_TOOL`. The returned outcome is the same lossless, frozen
+   * reports \`UNKNOWN_TOOL\`. The returned outcome is the same lossless, frozen
    * snapshot final observers receive.
    * 依次穿过前置策略、守卫、环绕分派、后置策略、定义所有的内容终化与最终通知执行工具。
    * 工具与监听器失败解析为物化的错误结果；不可见工具报告 UNKNOWN_TOOL。
@@ -4550,7 +4550,7 @@ export async function executeToolCalls(
 export function agentEvents(ctx: Context, agent: Agent, carrier: Scoped&lt;Agent&gt; = agentCarrier(agent)): AgentEventDispatch {
   // The dispatcher owns the subject injection; callers pass PayloadRest, so
   // the fused record is exactly the declared payload. The spread comes first,
-  // so a structurally acceptable payload that happens to carry an `agent` field
+  // so a structurally acceptable payload that happens to carry an \`agent\` field
   // can never override the injected subject.
   // 分发器拥有主体注入；调用者传入 PayloadRest，融合记录恰好是声明的载荷。展开在前，
   // 因此恰好携带 agent 字段的结构可接受载荷永远无法覆盖注入的主体。
@@ -4599,7 +4599,7 @@ export function agentEvents(ctx: Context, agent: Agent, carrier: Scoped&lt;Agent
    * 用 preset 组合一个 agent：确保 preset 的常驻挂载（standing mount），然后将 agent 的作用域键
    * 作为其子节点绑定到它，使挂载的注册与监听器覆盖该 agent。
    * @param agentCtx - the agent's scope context. agent 的作用域上下文。
-   * @param id - the preset id, or `undefined` for {@link defaultId}. preset id，缺省为默认 id。
+   * @param id - the preset id, or \`undefined\` for {@link defaultId}. preset id，缺省为默认 id。
    */
   async mount(agentCtx: Context, id?: string): Promise&lt;AgentPreset&gt; {
     const agentKey = scopeOf(agentCtx)
@@ -4794,7 +4794,7 @@ export function standingMountFor(agentCtx: Context): JoinedPresetMount | undefin
 <p><strong>本节点题</strong>：dsh 的启示不是”所有人都该自定义”，而是<strong>当你的场景足够专业时，值得搭一座专属脚手架</strong>——方法上与 AI-DLC”按风险选 Flow、不过度也不足工程化”（CH9）一致。</p>
 <p>先看一个真实的”场景脚手架”——examples/headless-agent/cordis.yml 是一个”一次性编码 agent”的完整组合（examples/headless-agent/cordis.yml，节选）：</p>
 <pre><code># One-shot coding agent with format-pure stdout. The app bin loads the
-# gitignored root `.env` into the process environment.
+# gitignored root \`.env\` into the process environment.
 # 一次性编码 agent，stdout 输出格式纯净。app bin 把被 gitignore 的根 .env 载入进程环境。
 - id: settings
   name: '@deepseek-ai/dsh-settings-file'
@@ -4803,7 +4803,7 @@ export function standingMountFor(agentCtx: Context): JoinedPresetMount | undefin
   name: '@deepseek-ai/dsh-credentials-local'
  
 # The DeepSeek adapter. Swap to '@deepseek-ai/dsh-llm-pi-ai' for the pi-ai-backed
-# twin (a `providers` dict keyed by route; `reasoning: high` replaces
+# twin (a \`providers\` dict keyed by route; \`reasoning: high\` replaces
 # thinking/reasoningEffort).
 # DeepSeek 适配器。换成 '@deepseek-ai/dsh-llm-pi-ai' 即用 pi-ai 版孪生适配器。
 - id: llm-deepseek
@@ -4824,7 +4824,7 @@ export function standingMountFor(agentCtx: Context): JoinedPresetMount | undefin
   config:
     timeoutMs: 60000
  
-# The example composition pre-creates one fresh `main` agent for its test driver.
+# The example composition pre-creates one fresh \`main\` agent for its test driver.
 - id: agent-spine
   name: '@deepseek-ai/dsh-agent-spine-demo'
   config:
