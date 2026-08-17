@@ -1988,6 +1988,304 @@ body::before {
 }
 
 .footer .pixel-heart { color: var(--pixel-pink); }
+
+/* ═══════════════════════════════════════════════
+   IMMERSIVE READER — 研究驱动的沉浸式阅读层
+   依据: 正极性优势(Piepenbrock'14) / 行长720px≈38字/行(Dyson'01)
+        / 行高1.9(CJK长文) / 去干扰+进度反馈(心流理论)
+   ═══════════════════════════════════════════════ */
+#readerOverlay {
+  --r-fs: 18px;
+  --r-lh: 1.9;
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: none;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  background: var(--r-bg);
+  color: var(--r-ink);
+}
+#readerOverlay.open { display: block; }
+#readerOverlay.theme-paper {
+  --r-bg: #FBFAF6;
+  --r-ink: #26251F;
+  --r-muted: #6E6A5E;
+  --r-rule: #E5E2D8;
+  --r-accent: #1A7F4B;
+  --r-code-bg: #F1EFE7;
+}
+#readerOverlay.theme-sepia {
+  --r-bg: #F4EDDA;
+  --r-ink: #46392A;
+  --r-muted: #8A7A5F;
+  --r-rule: #E3D9BE;
+  --r-accent: #8A5A18;
+  --r-code-bg: #ECE2C8;
+}
+
+#readerProgressBar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--r-accent);
+  z-index: 3010;
+  transition: width 0.1s linear;
+}
+
+#readerTopbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  background: var(--r-bg);
+  border-bottom: 1px solid var(--r-rule);
+  z-index: 3005;
+  transition: transform 0.25s ease;
+}
+#readerTopbar.hidden { transform: translateY(-52px); }
+#readerTopbar .rt-title {
+  flex: 1;
+  font-size: 13px;
+  color: var(--r-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.r-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  min-width: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--r-rule);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--r-ink);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+.r-btn:hover { border-color: var(--r-accent); color: var(--r-accent); }
+.r-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+#readerScroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+#readerScroll::-webkit-scrollbar { width: 10px; }
+#readerScroll::-webkit-scrollbar-thumb { background: var(--r-rule); border-radius: 5px; }
+
+.reader-column {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 96px 24px 140px;
+}
+
+.reader-head { margin-bottom: 48px; }
+.reader-head .rh-cat {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--r-accent);
+  margin-bottom: 14px;
+}
+.reader-head h1 {
+  font-size: clamp(26px, 4.5vw, 36px);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  margin: 0 0 14px;
+  color: var(--r-ink);
+}
+.reader-head .rh-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--r-muted);
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.reader-head .rh-rule {
+  height: 1px;
+  background: var(--r-rule);
+  margin-top: 28px;
+}
+
+#readerContent {
+  font-size: var(--r-fs);
+  line-height: var(--r-lh);
+  color: var(--r-ink);
+  word-break: break-word;
+}
+#readerContent p { margin: 0 0 1.2em; }
+#readerContent h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 2.4em 0 0.9em;
+  padding-top: 0.6em;
+  border-top: 1px solid var(--r-rule);
+  scroll-margin-top: 72px;
+}
+#readerContent h3 {
+  font-size: 1.22em;
+  font-weight: 600;
+  margin: 1.8em 0 0.7em;
+  scroll-margin-top: 72px;
+}
+#readerContent h4 {
+  font-size: 1.05em;
+  font-weight: 600;
+  margin: 1.4em 0 0.6em;
+}
+#readerContent strong { font-weight: 700; }
+#readerContent ul, #readerContent ol { margin: 0 0 1.2em; padding-left: 1.6em; }
+#readerContent li { margin-bottom: 0.5em; }
+#readerContent blockquote {
+  border-left: 3px solid var(--r-accent);
+  margin: 1.4em 0;
+  padding: 0.2em 1.2em;
+  color: var(--r-muted);
+}
+#readerContent a { color: var(--r-accent); text-decoration: none; border-bottom: 1px solid var(--r-rule); }
+#readerContent a:hover { border-bottom-color: var(--r-accent); }
+#readerContent img { max-width: 100%; border-radius: 6px; }
+#readerContent hr { border: none; border-top: 1px solid var(--r-rule); margin: 2.4em 0; }
+#readerContent code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--r-code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+#readerContent pre {
+  background: var(--r-code-bg);
+  border: 1px solid var(--r-rule);
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin: 1.4em 0;
+  overflow-x: auto;
+  line-height: 1.6;
+}
+#readerContent pre code { background: none; padding: 0; font-size: 13px; }
+#readerContent table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.4em 0;
+  font-size: 0.88em;
+  display: block;
+  overflow-x: auto;
+}
+#readerContent th, #readerContent td {
+  border: 1px solid var(--r-rule);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+#readerContent th { background: var(--r-code-bg); font-weight: 600; }
+
+/* 目录面板 */
+#readerToc {
+  position: fixed;
+  top: 68px;
+  right: 20px;
+  width: 280px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  background: var(--r-bg);
+  border: 1px solid var(--r-rule);
+  border-radius: 12px;
+  padding: 16px 8px;
+  z-index: 3006;
+  display: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+#readerToc.open { display: block; }
+#readerToc .toc-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--r-muted);
+  padding: 0 10px 10px;
+  border-bottom: 1px solid var(--r-rule);
+  margin-bottom: 8px;
+}
+#readerToc a {
+  display: block;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: var(--r-muted);
+  text-decoration: none;
+  border-radius: 6px;
+  border: none;
+  line-height: 1.4;
+}
+#readerToc a.lv2 { padding-left: 26px; }
+#readerToc a:hover { color: var(--r-ink); background: var(--r-code-bg); }
+#readerToc a.active { color: var(--r-accent); font-weight: 600; }
+
+/* 设置弹层 */
+#readerSettings {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  width: 300px;
+  background: var(--r-bg);
+  border: 1px solid var(--r-rule);
+  border-radius: 12px;
+  padding: 18px;
+  z-index: 3007;
+  display: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+#readerSettings.open { display: block; }
+#readerSettings .rs-row { margin-bottom: 16px; }
+#readerSettings .rs-row:last-child { margin-bottom: 0; }
+#readerSettings .rs-label {
+  font-size: 12px;
+  color: var(--r-muted);
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+}
+#readerSettings .rs-opts { display: flex; gap: 6px; }
+#readerSettings .rs-opts .r-btn { flex: 1; height: 32px; font-size: 12px; padding: 0 6px; }
+#readerSettings .rs-opts .r-btn.on { border-color: var(--r-accent); color: var(--r-accent); background: var(--r-code-bg); }
+
+/* 弹窗内入口按钮 */
+.reader-entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 12px;
+  margin-left: 4px;
+  border: 1px solid var(--pixel-green);
+  border-radius: 13px;
+  background: rgba(0,255,65,0.08);
+  color: var(--pixel-green);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+.reader-entry:hover { background: rgba(0,255,65,0.16); }
+.reader-entry svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (max-width: 640px) {
+  .reader-column { padding: 80px 18px 120px; }
+  #readerToc { right: 12px; left: 12px; width: auto; }
+  #readerSettings { right: 12px; left: 12px; width: auto; }
+}
 </style>
 </head>
 <body>
@@ -2321,6 +2619,58 @@ body::before {
   <div class="modal-content" id="modalContent">
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ IMMERSIVE READER ═══════════════ -->
+<div id="readerOverlay" class="theme-paper">
+  <div id="readerProgressBar"></div>
+  <div id="readerTopbar">
+    <button class="r-btn" onclick="closeReader()" title="返回 (Esc)">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      返回
+    </button>
+    <span class="rt-title" id="readerTopTitle"></span>
+    <button class="r-btn" onclick="toggleReaderSettings(event)" title="排版设置">
+      <svg viewBox="0 0 24 24"><path d="M4 7V5h16v2M9 19h6M12 5v14"/></svg>
+      排版
+    </button>
+    <button class="r-btn" onclick="toggleReaderToc(event)" title="章节目录">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h13"/></svg>
+      目录
+    </button>
+  </div>
+  <div id="readerScroll">
+    <div class="reader-column">
+      <div class="reader-head" id="readerHead"></div>
+      <div id="readerContent"></div>
+    </div>
+  </div>
+  <div id="readerToc"><div class="toc-title">章节目录</div><div id="readerTocList"></div></div>
+  <div id="readerSettings">
+    <div class="rs-row">
+      <div class="rs-label">字号</div>
+      <div class="rs-opts">
+        <button class="r-btn" onclick="setReaderFont(-1)">A−</button>
+        <button class="r-btn" onclick="setReaderFont(0)">默认</button>
+        <button class="r-btn" onclick="setReaderFont(1)">A+</button>
+      </div>
+    </div>
+    <div class="rs-row">
+      <div class="rs-label">行距</div>
+      <div class="rs-opts">
+        <button class="r-btn" onclick="setReaderLineHeight('compact')">紧凑</button>
+        <button class="r-btn" onclick="setReaderLineHeight('standard')">标准</button>
+        <button class="r-btn" onclick="setReaderLineHeight('loose')">宽松</button>
+      </div>
+    </div>
+    <div class="rs-row">
+      <div class="rs-label">主题</div>
+      <div class="rs-opts">
+        <button class="r-btn" onclick="setReaderTheme('paper')">纸白</button>
+        <button class="r-btn" onclick="setReaderTheme('sepia')">护眼</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -5638,6 +5988,7 @@ function openPost(id) {
       <div class="modal-meta">
         <span>📅 ${post.date}</span>
         ${post.tags.map(t => `<span>#${t}</span>`).join('')}
+        ${(post.content && post.content.length > 3000) ? `<button class="reader-entry" onclick="event.stopPropagation(); openReader('${post.id}')" title="全屏沉浸阅读：纸白排版 + 章节目录 + 进度"><svg viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 014 4v13a3 3 0 00-3-3H2zM22 4h-6a4 4 0 00-4 4v13a3 3 0 013-3h7z"/></svg>沉浸阅读</button>` : ''}
       </div>
     </div>
     <div class="modal-body">
@@ -5654,8 +6005,152 @@ function closeModal() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Escape') {
+    if (document.getElementById('readerOverlay').classList.contains('open')) closeReader();
+    else closeModal();
+  }
 });
+
+// ═══════════════════════════════════════════════
+// IMMERSIVE READER ENGINE — 研究驱动的沉浸阅读
+// 排版依据见 CSS 区块注释；阅读时长 ≈350字/分钟(中文技术文)
+// ═══════════════════════════════════════════════
+const READER_LH = { compact: '1.7', standard: '1.9', loose: '2.1' };
+const READER_PREFS_KEY = 'immersive-reader-prefs';
+let _readerPrefs = { fs: 18, lh: 'standard', theme: 'paper' };
+try { Object.assign(_readerPrefs, JSON.parse(localStorage.getItem(READER_PREFS_KEY) || '{}')); } catch (e) {}
+let _readerHeads = [];
+
+function saveReaderPrefs() {
+  try { localStorage.setItem(READER_PREFS_KEY, JSON.stringify(_readerPrefs)); } catch (e) {}
+}
+
+function applyReaderPrefs() {
+  const ov = document.getElementById('readerOverlay');
+  ov.style.setProperty('--r-fs', _readerPrefs.fs + 'px');
+  ov.style.setProperty('--r-lh', READER_LH[_readerPrefs.lh] || '1.9');
+  ov.classList.remove('theme-paper', 'theme-sepia');
+  ov.classList.add('theme-' + (_readerPrefs.theme === 'sepia' ? 'sepia' : 'paper'));
+}
+
+function updateReaderPrefsUI() {
+  document.querySelectorAll('#readerSettings .r-btn').forEach(b => {
+    const oc = b.getAttribute('onclick') || '';
+    const on =
+      (oc.includes("setReaderLineHeight('") && oc.includes("'" + _readerPrefs.lh + "'")) ||
+      (oc.includes("setReaderTheme('") && oc.includes("'" + _readerPrefs.theme + "'"));
+    b.classList.toggle('on', on);
+  });
+}
+
+function setReaderFont(d) {
+  _readerPrefs.fs = d === 0 ? 18 : Math.min(22, Math.max(15, _readerPrefs.fs + d));
+  applyReaderPrefs(); saveReaderPrefs();
+}
+function setReaderLineHeight(m) { _readerPrefs.lh = m; applyReaderPrefs(); saveReaderPrefs(); updateReaderPrefsUI(); }
+function setReaderTheme(t) { _readerPrefs.theme = t; applyReaderPrefs(); saveReaderPrefs(); updateReaderPrefsUI(); }
+
+function openReader(id) {
+  const post = POSTS.find(p => p.id === id);
+  if (!post) return;
+  const cat = getCategoryInfo(post.category);
+  const textLen = (post.content || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, '').length;
+  const mins = Math.max(1, Math.round(textLen / 350));
+  document.getElementById('readerTopTitle').textContent = post.title;
+  document.getElementById('readerHead').innerHTML = `
+    <div class="rh-cat">${cat.icon} ${cat.name}</div>
+    <h1>${post.title}</h1>
+    <div class="rh-meta"><span>${post.date}</span><span>约 ${mins} 分钟</span></div>
+    <div class="rh-rule"></div>`;
+  document.getElementById('readerContent').innerHTML = post.content || `<p>${post.excerpt}</p>`;
+
+  const heads = Array.from(document.querySelectorAll('#readerContent h2, #readerContent h3'));
+  _readerHeads = heads;
+  let tocHtml = '';
+  heads.forEach((h, i) => {
+    h.id = 'rh-' + i;
+    tocHtml += `<a href="#rh-${i}" class="${h.tagName === 'H3' ? 'lv2' : ''}" onclick="event.preventDefault(); readerScrollTo(${i})">${h.textContent}</a>`;
+  });
+  document.getElementById('readerTocList').innerHTML = tocHtml || '<a style="pointer-events:none;opacity:.6">（本文无章节标题）</a>';
+  document.querySelector('#readerTopbar button[title="章节目录"]').style.display = heads.length ? '' : 'none';
+
+  const ov = document.getElementById('readerOverlay');
+  const sc = document.getElementById('readerScroll');
+  sc.scrollTop = 0;
+  document.getElementById('readerProgressBar').style.width = '0%';
+  document.getElementById('readerToc').classList.remove('open');
+  document.getElementById('readerSettings').classList.remove('open');
+  document.getElementById('readerTopbar').classList.remove('hidden');
+  applyReaderPrefs();
+  updateReaderPrefsUI();
+  ov.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (window.twemoji) {
+    twemoji.parse(document.getElementById('readerContent'), { folder: 'svg', ext: '.svg', base: 'https://cdn.jsdelivr.net/npm/twemoji@14.0.2/assets/' });
+  }
+}
+
+function closeReader() {
+  document.getElementById('readerOverlay').classList.remove('open');
+  document.getElementById('readerToc').classList.remove('open');
+  document.getElementById('readerSettings').classList.remove('open');
+}
+
+function readerScrollTo(i) {
+  const sc = document.getElementById('readerScroll');
+  const h = _readerHeads[i];
+  if (!h) return;
+  const pos = h.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop;
+  sc.scrollTo({ top: Math.max(0, pos - 72), behavior: 'smooth' });
+  document.getElementById('readerToc').classList.remove('open');
+}
+
+function toggleReaderToc(e) {
+  e.stopPropagation();
+  document.getElementById('readerSettings').classList.remove('open');
+  document.getElementById('readerToc').classList.toggle('open');
+}
+function toggleReaderSettings(e) {
+  e.stopPropagation();
+  document.getElementById('readerToc').classList.remove('open');
+  document.getElementById('readerSettings').classList.toggle('open');
+}
+
+function updateReaderTocActive() {
+  const sc = document.getElementById('readerScroll');
+  const scTop = sc.getBoundingClientRect().top;
+  const mark = sc.scrollTop + 90;
+  let active = -1;
+  _readerHeads.forEach((h, i) => {
+    if (h.getBoundingClientRect().top - scTop + sc.scrollTop <= mark) active = i;
+  });
+  document.querySelectorAll('#readerTocList a').forEach((a, i) => a.classList.toggle('active', i === active));
+}
+
+(function initReaderScroll() {
+  const sc = document.getElementById('readerScroll');
+  let lastY = 0;
+  sc.addEventListener('scroll', () => {
+    const max = sc.scrollHeight - sc.clientHeight;
+    document.getElementById('readerProgressBar').style.width = (max > 0 ? sc.scrollTop / max * 100 : 0) + '%';
+    const bar = document.getElementById('readerTopbar');
+    if (sc.scrollTop > lastY + 4 && sc.scrollTop > 120) bar.classList.add('hidden');
+    else if (sc.scrollTop < lastY - 4) bar.classList.remove('hidden');
+    lastY = sc.scrollTop;
+    updateReaderTocActive();
+  }, { passive: true });
+
+  document.addEventListener('click', e => {
+    const ov = document.getElementById('readerOverlay');
+    if (!ov.classList.contains('open')) return;
+    const toc = document.getElementById('readerToc');
+    const st = document.getElementById('readerSettings');
+    if (toc.classList.contains('open') && !toc.contains(e.target) && !e.target.closest('button[title="章节目录"]')) toc.classList.remove('open');
+    if (st.classList.contains('open') && !st.contains(e.target) && !e.target.closest('button[title="排版设置"]')) st.classList.remove('open');
+  });
+})();
+
+applyReaderPrefs();
 
 // ═══════════════════════════════════════════════
 // LOADER
