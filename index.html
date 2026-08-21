@@ -1412,6 +1412,8 @@ body::before {
   font-size: 16px;
   line-height: 1.8;
   color: var(--text-secondary);
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .modal-body h2 {
@@ -1454,6 +1456,8 @@ body::before {
   padding: 2px 8px;
   border-radius: 4px;
   color: var(--pixel-green);
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .modal-body pre {
@@ -1471,6 +1475,28 @@ body::before {
   color: var(--text-primary);
   font-size: 13px;
   line-height: 1.6;
+}
+
+.modal-body table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  font-size: 14px;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.modal-body th, .modal-body td {
+  border: 1px solid var(--glass-border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+  white-space: normal;
+}
+.modal-body th {
+  background: var(--bg-tertiary);
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .pixel-divider {
@@ -1905,6 +1931,16 @@ body::before {
   .tools-grid { grid-template-columns: 1fr; }
   .modal-content { padding: 32px 20px; border-radius: var(--radius-lg); }
   .stat-num { font-size: 22px; }
+  /* 移动端长文弹窗：禁用 6 万像素级元素的弹跳变换动画，避免渲染卡死 */
+  .modal-content {
+    transform: none;
+    transition: opacity 0.25s ease;
+  }
+  .modal-overlay.open .modal-content { transform: none; }
+  .modal-overlay.open {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
 }
 
 /* Mobile nav menu */
